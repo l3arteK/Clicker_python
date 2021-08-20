@@ -7,21 +7,19 @@ pygame.display.set_caption("Clicker")
 clock = pygame.time.Clock()
 
 current_time = 0
+results_check = False
 
 time = seconds
 one = True
-
 
 delta_time = pygame.time.get_ticks()
 
 sec = 60
 
-
-
-
 text_time = text_time_font.render("Time:", True, (255, 255, 255))
 text_score = text_score_font.render(str(score), True, (255, 255, 255))
-
+Outcomes = []
+number_of_outcomes = 0
 while True:
     from classes import score, seconds
 
@@ -50,14 +48,36 @@ while True:
         check = False
         one = True
 
-    button_reset.draw(screen,time,restart)
-    button1.draw(screen, time ,button_reset.restart)  # Click me
+    if not button_results.press:
+        button_reset.draw(screen, time)
+        button1.draw(screen, time)  # Click me
 
-    button_save.draw(screen,time, button_reset.restart)  # Save
+        button_save.draw(screen, time)  # Save
 
-    button_up.draw(screen,time, button_reset.restart)
-    button_down.draw(screen,time, button_reset.restart)
+        button_up.draw(screen, time)
+        button_down.draw(screen, time)
+    else:
+        plik = open('wyniki.txt', 'r')
+        zawartosc = plik.readlines()
+        plik.close()
 
+        if number_of_outcomes < len(zawartosc):
+            for linie in zawartosc:
+                linie = linie.strip()
+                Outcomes.append(Outcome(linie, 200 + number_of_outcomes * 100))
+                number_of_outcomes += 1
+        elif len(zawartosc) < number_of_outcomes:
+            number_of_outcomes = 0
+            Outcomes = []
+            for linie in zawartosc:
+                linie = linie.strip()
+                Outcomes.append(Outcome(linie, 200 + number_of_outcomes * 100))
+                number_of_outcomes += 1
+
+        for outcome in Outcomes:
+            outcome.draw(screen)
+
+    button_results.draw(screen, time)
 
     screen.blit(text_time, (1000, 50))
     screen.blit(text_score, (100, 50))
